@@ -24,13 +24,13 @@ void TestingManager::prepareContext() {
             auto current_text = Utils::generateText(text_size, alphabet_size);
             text_patterns_pack[current_text] = std::vector<TestCaseContainer>();
 
-            auto offset = Utils::generateOffset(text_size);
             for (const auto &pattern_size: PATTERN_SIZES) {
+                auto offset = Utils::generateOffset(text_size);
                 for (const auto &universal_symbols_amount: UNIVERSAL_SYMBOLS_AMOUNT) {
                     text_patterns_pack[current_text].push_back(
                             TestCaseContainer(alphabet_size,
                                               current_text.length(),
-                                              Utils::generatePattern(current_text,pattern_size,
+                                              Utils::generatePattern(current_text, pattern_size,
                                                                      universal_symbols_amount,
                                                                      offset),
                                               universal_symbols_amount)
@@ -50,9 +50,10 @@ void TestingManager::startTests() {
     for (int i = 0; i < origins.size(); ++i) {
         for (const auto &[text, patterns]: origins[i]) {
             for (int j = 0; j < patterns.size(); ++j) {
-                loggers[0] << startKMPTest(text, patterns[j], 2 * (i % 2 == 0 ? 1 : 2), base_mode);
-                loggers[1] << startKMPTest(text, patterns[j], 2 * (i % 2 == 0 ? 1 : 2), cool_mode);
+                loggers[0] << startKMPTest(text, patterns[j], base_mode);
+                loggers[1] << startKMPTest(text, patterns[j], cool_mode);
                 loggers[2] << startNaiveSearchTest(text, patterns[j]);
+                std::cout << "Test " << i << " " << j << " completed\n";
             }
         }
 
@@ -73,13 +74,14 @@ void TestingManager::prepareLoggers() {
     }
 }
 
-std::string TestingManager::startKMPTest(const std::string &text, const TestCaseContainer &test_case, int alphabet_size,
-                                         std::string &pi_func) {
+std::string
+TestingManager::startKMPTest(const std::string &text, const TestCaseContainer &test_case, std::string &pi_func) {
     auto kmp_suite = KMPTestContainer();
+
     for (int i = 0; i < TESTS_AMOUNT; ++i) {
-        if (!kmp_suite.test(text, test_case.getPattern(), alphabet_size, pi_func)) {
+        if (!kmp_suite.test(text, test_case.getPattern(), pi_func)) {
             badTest(text, test_case.getPattern(), Utils::naiveSearch(text, test_case.getPattern()),
-                    kmp_suite.kmp(text, test_case.getPattern(), alphabet_size, pi_func));
+                    kmp_suite.kmp_high_level(text, test_case.getPattern(), pi_func));
         }
     }
     std::vector<std::string> result = {std::to_string(kmp_suite.getOperations() / TESTS_AMOUNT),

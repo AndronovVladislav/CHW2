@@ -11,9 +11,15 @@ public:
         pis = {Utils::basePi, Utils::coolPi};
     }
 
-    bool test(const std::string &text, const std::string &pattern, int alphabet_size, std::string pi_func);
+    bool test(const std::string &text, const std::string &pattern, std::string pi_func);
 
-    std::vector<size_t> kmp(const std::string &text, const std::string &pattern, int alphabet_size, std::string &pi_func);
+    std::vector<size_t>
+    kmp_low_level(const std::string &text, const std::string &pattern, std::string &pi_func);
+
+    std::vector<size_t>
+    kmp_high_level(const std::string &text, const std::string &pattern, std::string &pi_func);
+
+    size_t getTotalLength(std::vector<std::string> &chunks, size_t i);
 
     int64_t getOperations() const;
 
@@ -22,7 +28,7 @@ public:
 private:
     int64_t operations;
     int64_t time;
-    std::array<std::function<std::vector<std::vector<size_t>>(std::string &, int, int64_t &)>, 2> pis;
+    std::array<std::function<std::vector<size_t>(std::string&, int64_t&)>, 2> pis;
 };
 
 

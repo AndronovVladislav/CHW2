@@ -5,10 +5,7 @@
 
 class NaiveSearchTestContainer {
 public:
-    NaiveSearchTestContainer() {
-        time = 0;
-        operations = 0;
-    }
+    NaiveSearchTestContainer();
 
     void test(const std::string &text, const std::string &pattern);
 

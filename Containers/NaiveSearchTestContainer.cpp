@@ -1,10 +1,14 @@
 #include "NaiveSearchTestContainer.h"
 
+NaiveSearchTestContainer::NaiveSearchTestContainer() {
+    time = 0;
+    operations = 0;
+}
+
 void NaiveSearchTestContainer::test(const std::string &text, const std::string &pattern) {
     auto start = std::chrono::high_resolution_clock::now();
     NaiveSearchTestContainer::naiveSearch(text, pattern);
-    auto elapsed = std::chrono::high_resolution_clock::now() - start;
-    time += std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count();
+    time += std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count();
 }
 
 int64_t NaiveSearchTestContainer::getOperations() const {

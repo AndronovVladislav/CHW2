@@ -5,7 +5,6 @@ std::vector<size_t> Utils::naiveSearch(const std::string &text, const std::strin
 
     for (int i = 0; i < text.length() - pattern.length() + 1; ++i) {
         for (int j = 0; j < pattern.length(); ++j) {
-            // такое разделение на ветки нужно, чтобы корректно посчитать количество операций
             if (text[i + j] == pattern[j] || pattern[j] == '?') {
                 if (j == pattern.length() - 1) {
                     res.push_back(i);
@@ -19,94 +18,47 @@ std::vector<size_t> Utils::naiveSearch(const std::string &text, const std::strin
     return res;
 }
 
+std::vector<size_t> Utils::basePi(std::string &str, int64_t &operations) {
+    std::vector<size_t> res(str.length());
 
-std::vector<std::vector<size_t>> Utils::basePi(std::string &str, int alphabet_size, int64_t &operations) {
-    auto all_strings = getAllStrings(str, alphabet_size);
-    std::vector<std::vector<size_t>> res(all_strings.size(), std::vector<size_t>(str.length()));
+    for (int i = 1; i < str.length(); ++i) {
+        size_t l = res[i - 1];
 
-    int i = 0;
-    for (auto &str_final: all_strings) {
-        for (int k = 1; k < str_final.length(); ++k) {
-            size_t l = res[i][k - 1];
-
+        operations += 1;
+        while (l > 0 && str[i] != str[l]) {
+            l = res[l - 1];
             operations += 1;
-            while (l > 0 && str_final[k] != str_final[l]) {
-                l = res[i][l - 1];
-                operations += 1;
-            }
-
-            operations += 1;
-            if (str_final[k] == str_final[l]) {
-                ++l;
-            }
-            res[i][k] = l;
         }
-        ++i;
+
+        operations += 1;
+        if (str[i] == str[l]) {
+            ++l;
+        }
+        res[i] = l;
     }
 
     return res;
 }
 
-std::vector<std::vector<size_t>> Utils::coolPi(std::string &str, int alphabet_size, int64_t &operations) {
-    std::vector<std::vector<size_t>> br = basePi(str, alphabet_size, operations);
-    std::vector<std::vector<size_t>> brs(br.size(), std::vector<size_t>(str.length()));
+std::vector<size_t> Utils::coolPi(std::string &str, int64_t &operations) {
+    std::vector<size_t> br = basePi(str, operations);
+    std::vector<size_t> brs(br.size());
 
-    for (int i = 0; i < brs.size(); ++i) {
-        for (int j = 1; j < br[i].size(); ++j) {
-            operations += 1;
-            if (str[br[i][j]] != str[i + 1]) {
-                brs[i][j] = br[i][j];
-            } else {
-                brs[i][j] = brs[i][br[i][j] - 1];
-            }
+    for (int i = 1; i < br.size(); ++i) {
+        operations += 1;
+        if (str[br[i]] != str[i + 1]) {
+            brs[i] = br[i];
+        } else {
+            brs[i] = brs[br[i] - 1];
         }
-
     }
 
     return brs;
 }
 
 bool Utils::checker(std::vector<size_t> &res, const std::string &text, const std::string &pattern) {
-    return res == naiveSearch(text, pattern);
+    return res == Utils::naiveSearch(text, pattern);
 }
-
-std::set<std::string> Utils::getAllStrings(std::string &universal_str, int alphabet_size) {
-    std::set < std::string > res;
-    size_t universal_symbol_amount = std::count_if(universal_str.begin(), universal_str.end(),
-                                                   [](auto &symb) { return symb == '?'; });
-    std::vector<size_t> places = getUniversalPlaces(universal_str);
-
-    for (size_t i = 0; i < alphabet_size; ++i) {
-        for (size_t j = 0; j < alphabet_size; ++j) {
-            for (size_t k = 0; k < alphabet_size; ++k) {
-                for (size_t l = 0; l < alphabet_size; ++l) {
-                    std::string replacement;
-                    std::copy(universal_str.begin(), universal_str.end(), std::back_inserter(replacement));
-
-                    std::vector<size_t> replacements = std::vector({i, j, k, l});
-                    for (int m = 0; m < universal_symbol_amount; ++m) {
-                        replacement[places[m]] = replacements[m] + 'a';
-                    }
-
-                    res.insert(replacement);
-                }
-            }
-        }
-    }
-
-    return res;
-}
-
-std::vector<size_t> Utils::getUniversalPlaces(std::string &universal_str) {
-    std::vector<size_t> res;
-    for (size_t i = 0; i < universal_str.length(); ++i) {
-        if (universal_str[i] == '?') {
-            res.push_back(i);
-        }
-    }
-    return res;
-}
-
 
 std::string Utils::generateText(int len, int alphabet_size) {
     static std::mt19937 generator(time(nullptr));
@@ -148,7 +100,25 @@ size_t Utils::generateOffset(size_t size) {
 
 std::string Utils::join(const std::vector<std::string> &sequence, const std::string &separator) {
     std::string result;
-    for (int i = 0; i < sequence.size(); ++i)
+    for (int i = 0; i < sequence.size(); ++i) {
         result += sequence[i] + ((i != sequence.size() - 1 && !sequence[i].empty()) ? separator : "");
+    }
     return result;
+}
+
+std::vector<std::string> Utils::split(std::string s, std::string delimiter) {
+    size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+    std::string token;
+    std::vector<std::string> res;
+
+    while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+        token = s.substr (pos_start, pos_end - pos_start);
+        pos_start = pos_end + delim_len;
+//        if (token != "") {
+            res.push_back(token);
+//        }
+    }
+
+    res.push_back (s.substr (pos_start));
+    return res;
 }
