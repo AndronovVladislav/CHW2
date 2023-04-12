@@ -1,5 +1,11 @@
 #include "KMPTestContainer.h"
 
+KMPTestContainer::KMPTestContainer() {
+    operations = 0;
+    time = 0;
+    pis = {Utils::basePi, Utils::coolPi};
+}
+
 std::vector<size_t>
 KMPTestContainer::kmp_low_level(const std::string &text, const std::string &pattern, std::string &pi_func) {
     std::vector<size_t> res;
@@ -60,8 +66,7 @@ KMPTestContainer::test(const std::string &text, const std::string &pattern, std:
     auto res = kmp_high_level(text, pattern, pi_func);
     auto elapsed = std::chrono::high_resolution_clock::now() - start;
     time += std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count();
-//    return Utils::checker(res, text, pattern);
-    return true;
+    return Utils::checker(res, text, pattern);
 }
 
 int64_t KMPTestContainer::getOperations() const {

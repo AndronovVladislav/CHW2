@@ -8,7 +8,7 @@ TestCaseContainer::TestCaseContainer(size_t alphabet_size, size_t text_size, std
     this->universal_symbols_amount = universal_symbols_amount;
 }
 
-std::string TestCaseContainer::log(std::vector<std::string> extra_info) const {
+std::string TestCaseContainer::log(std::vector<std::string> &extra_info) const {
     std::vector<std::string> res;
 
     res.push_back(std::to_string(alphabet_size));

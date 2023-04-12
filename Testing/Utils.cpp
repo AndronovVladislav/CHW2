@@ -114,9 +114,7 @@ std::vector<std::string> Utils::split(std::string s, std::string delimiter) {
     while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
         token = s.substr (pos_start, pos_end - pos_start);
         pos_start = pos_end + delim_len;
-//        if (token != "") {
-            res.push_back(token);
-//        }
+        res.push_back(token);
     }
 
     res.push_back (s.substr (pos_start));

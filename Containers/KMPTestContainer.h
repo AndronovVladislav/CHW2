@@ -5,11 +5,7 @@
 
 class KMPTestContainer {
 public:
-    KMPTestContainer() {
-        operations = 0;
-        time = 0;
-        pis = {Utils::basePi, Utils::coolPi};
-    }
+    KMPTestContainer();
 
     bool test(const std::string &text, const std::string &pattern, std::string pi_func);
 
